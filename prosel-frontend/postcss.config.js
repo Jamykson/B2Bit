@@ -1,6 +1,7 @@
+// CÓDIGO CORRETO
 export default {
   plugins: {
-    "@tailwindcss/postcss": {},
+    tailwindcss: {}, // ⬅️ Esta é a forma correta
     autoprefixer: {},
   },
 }
