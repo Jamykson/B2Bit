@@ -33,21 +33,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    // aqui simulamos o usuário sem chamar API
+  // 1. Defina aqui as credenciais corretas
+  const correctEmail = "test@test.com";
+  const correctPassword = "123456";
+
+  // Simula um pequeno atraso, como se fosse uma chamada de API real
+  await new Promise(resolve => setTimeout(resolve, 500));
+
+  // 2. Verifica se o e-mail e a senha correspondem
+  if (email === correctEmail && password === correctPassword) {
+    // 3. Se estiverem corretos, cria o usuário e faz o login
     const fakeUser = {
       name: "Jamykson Freitas",
-      email,
-      avatar: "https://i.pravatar.cc/150?img=3", // avatar aleatório
+      email: correctEmail,
+      avatar: "https://avatars.githubusercontent.com/u/105256874?v=4",
     };
 
     setUser(fakeUser);
     localStorage.setItem("user", JSON.stringify(fakeUser));
-  };
+  } else {
+    // 4. Se estiverem errados, lança um erro com uma mensagem
+    throw new Error("E-mail ou senha inválidos.");
+  }
+};
 
   const signOut = () => {
     localStorage.removeItem("user");
     setUser(null);
-    window.location.replace("/login"); // opcional
+    // A linha de window.location.replace foi removida daqui
   };
 
   return (

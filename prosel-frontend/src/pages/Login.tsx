@@ -30,29 +30,21 @@ export default function Login() {
   };
 }, [formRef]);
 
+  // Dentro de Login.tsx
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
+    
+    setError(""); // O erro é limpo AQUI
+    
     setLoading(true);
 
     try {
-
       await signIn(email, password);
       navigate("/profile");
-
-
-
     } catch (err: any) {
-      // Se falhar, mostra mensagem de erro
-      setError(
-        err?.response?.data?.message || err?.message || "Erro ao autenticar"
-      );
-
-      // 🔹 Modo de fallback: login simulado (para testes sem API)
-      // Remova se não quiser login fake
-      setTimeout(() => {
-        navigate("/profile");
-      }, 500);
+      // E um novo erro é definido aqui, se a tentativa falhar
+      setError(err.message || "Erro ao autenticar");
     } finally {
       setLoading(false);
     }

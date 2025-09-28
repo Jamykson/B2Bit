@@ -3,13 +3,12 @@ import { AuthContext } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 export default function Profile() {
-  const { user, logout } = useContext(AuthContext);
+  const { user, signOut } = useContext(AuthContext);
   const navigate = useNavigate();
   const [animateButton, setAnimateButton] = useState(false);
   const headerRef = useRef<HTMLDivElement>(null);
   const handleLogout = () => {
     signOut();
-    navigate("/login");
   };
 
   useEffect(() => {
