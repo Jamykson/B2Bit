@@ -4,3 +4,7 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Se quiser, pode adicionar estilos globais aqui */
+body {
+  @apply bg-[#f6f7f8];
+}
