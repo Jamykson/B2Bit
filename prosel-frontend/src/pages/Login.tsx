@@ -5,7 +5,7 @@ import logo from "../assets/b2bit-logo.png";
 
 export default function Login() {
   const { signIn } = useContext(AuthContext);
-  const [email, setEmail] = useState("teste@teste.com");
+  const [email, setEmail] = useState("test@test.com");
   const [password, setPassword] = useState("123456");
   const [error, setError] = useState("");
   const [animateButton, setAnimateButton] = useState(false);
@@ -109,8 +109,9 @@ export default function Login() {
               className={`
                 w-full h-14 flex items-center justify-center text-[18px] text-white rounded-lg font-semibold 
                 hover:brightness-95 transition disabled:opacity-60
-                transition-colors duration-150 ease-in-out // <-- MUDANÇA AQUI
-                ${animateButton ? 'bg-[#2563eb]' : 'bg-[#02274f]'}
+                transition-colors duration-150 ease-in-out
+                ${animateButton ? 'bg-[#2563eb] border-2 border-[#2596be]' 
+                                : 'bg-[#02274f] border-2 border-transparent'}
               `}
             >
               {loading ? "Entrando..." : "Sign In"}

@@ -35,7 +35,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signIn = async (email: string, password: string) => {
     // aqui simulamos o usuário sem chamar API
     const fakeUser = {
-      name: "Usuário Teste",
+      name: "Jamykson Freitas",
       email,
       avatar: "https://i.pravatar.cc/150?img=3", // avatar aleatório
     };
