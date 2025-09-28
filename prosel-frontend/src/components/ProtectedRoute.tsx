@@ -8,7 +8,7 @@ export default function ProtectedRoute({ children }: Props) {
   const { user, loading } = useContext(AuthContext);
 
   if (loading) return <div className="p-6">Carregando...</div>;
-  if (!user) return <Navigate to="/login" replace />;
+  if (!user && !localStorage.getItem("user")) return <Navigate to="/login" replace />;
 
   return children;
 }
