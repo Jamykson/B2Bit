@@ -7,8 +7,19 @@ interface Props { children: JSX.Element; }
 export default function ProtectedRoute({ children }: Props) {
   const { user, loading } = useContext(AuthContext);
 
-  if (loading) return <div className="p-6">Carregando...</div>;
-  if (!user && !localStorage.getItem("user")) return <Navigate to="/login" replace />;
+  
+  if (loading) {
+    return (
+      
+      <div className="flex justify-center items-center h-screen bg-gray-100">
+        <p className="text-xl text-gray-500 font-medium">Loading...</p>
+      </div>
+    );
+  }
+
+  if (!user && !localStorage.getItem("@b2bit_token")) {
+    return <Navigate to="/login" replace />;
+  }
 
   return children;
 }

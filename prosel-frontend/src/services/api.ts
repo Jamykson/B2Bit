@@ -10,21 +10,18 @@ const api = axios.create({
   },
 });
 
-// request: injeta token se existir
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("access_token");
   if (token && config.headers) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
 
-// response: trata 401 globalmente (limpa token e força login)
 api.interceptors.response.use(
   (res) => res,
   (err) => {
     const status = err?.response?.status;
     if (status === 401 || status === 403) {
       localStorage.removeItem("access_token");
-      // redireciona para login (forçado)
       try { window.location.replace("/login"); } catch {}
     }
     return Promise.reject(err);

@@ -5,8 +5,8 @@ import logo from "../assets/b2bit-logo.png";
 
 export default function Login() {
   const { signIn } = useContext(AuthContext);
-  const [email, setEmail] = useState("test@test.com");
-  const [password, setPassword] = useState("123456");
+  const [email, setEmail] = useState("cliente@youdrive.com");
+  const [password, setPassword] = useState("password");
   const [error, setError] = useState("");
   const [animateButton, setAnimateButton] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
@@ -17,7 +17,6 @@ export default function Login() {
   function handleClickOutside(event: MouseEvent) {
     if (formRef.current && !formRef.current.contains(event.target as Node)) {
       setAnimateButton(true);
-      // MUDANÇA AQUI de 700 para 300
       const timer = setTimeout(() => {
         setAnimateButton(false);
       }, 300); 
@@ -30,26 +29,20 @@ export default function Login() {
   };
 }, [formRef]);
 
-  // Dentro de Login.tsx
-
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    setError(""); // O erro é limpo AQUI
-    
-    setLoading(true);
+  e.preventDefault();
+  setError("");
+  setLoading(true);
 
-    try {
-      await signIn(email, password);
-      navigate("/profile");
-    } catch (err: any) {
-      // E um novo erro é definido aqui, se a tentativa falhar
-      setError(err.message || "Erro ao autenticar");
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  try {
+    await signIn(email, password);
+    navigate("/profile");
+  } catch (err: any) {
+    setError(err.message || "Erro ao autenticar");
+  } finally {
+    setLoading(false);
+  }
+};
   return (
     <div className="flex items-center justify-center min-h-screen bg-white p-8">
       {/* Card */}
@@ -59,10 +52,9 @@ export default function Login() {
           <img src={logo} alt="b2bit logo" className="w-70 h-auto" />
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-6">
-          {error && <p className="text-red-500 text-center text-sm">{error}</p>}
+        <form ref={formRef} onSubmit={handleLogin} className="">
+          {error && <p className="text-red-500 text-center text-sm mb-4">{error}</p>}
 
-          <form ref={formRef} onSubmit={handleLogin} className="space-y-6"></form>
           {/* E-mail */}
           <div className="flex flex-col items-start">
             <label className="block text-[18px] font-semibold text-[#333333] mb-2">
@@ -79,7 +71,7 @@ export default function Login() {
           </div>
 
           {/* Senha */}
-          <div className="flex flex-col items-start mt-4">
+          <div className="flex flex-col items-start mt-6">
             <label className="block text-[18px] font-semibold text-[#333333] mb-2">
               Password
             </label>
@@ -94,19 +86,21 @@ export default function Login() {
           </div>
 
           {/* Botão */}
-          <div className="flex justify-center mt-6">
+          <div className="flex justify-center mt-10">
             <button
               type="submit"
               disabled={loading}
               className={`
-                w-full h-14 flex items-center justify-center text-[18px] text-white rounded-lg font-semibold 
-                hover:brightness-95 transition disabled:opacity-60
+                w-full h-14 flex items-center justify-center text-white rounded-md font-semibold text-[18px] 
+                hover:brightness-95
                 transition-colors duration-150 ease-in-out
-                ${animateButton ? 'bg-[#2563eb] border-2 border-[#2596be]' 
-                                : 'bg-[#02274f] border-2 border-transparent'}
+                ${animateButton 
+                  ? 'bg-[#2563eb] border-2 border-[#2596be]' 
+                  : 'bg-[#02274f] border-2 border-transparent'
+                }
               `}
             >
-              {loading ? "Entrando..." : "Sign In"}
+              {loading ? "Signing in..." : "Sign In"}
             </button>
           </div>
         </form>

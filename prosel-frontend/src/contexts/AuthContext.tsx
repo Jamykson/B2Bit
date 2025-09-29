@@ -1,9 +1,14 @@
 import React, { createContext, useEffect, useState } from "react";
+import axios from 'axios';
+
+const api = axios.create({
+  baseURL: "/api", 
+});
 
 type User = {
   name: string;
   email: string;
-  avatar: string;
+  avatar: { url: string; };
 } | null;
 
 type AuthContextType = {
@@ -13,54 +18,72 @@ type AuthContextType = {
   signOut: () => void;
 };
 
-export const AuthContext = createContext<AuthContextType>({
-  user: null,
-  loading: true,
-  signIn: async () => {},
-  signOut: () => {},
-});
+export const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
+    async function loadUserFromStorage() {
+      const token = localStorage.getItem("@b2bit_token");
+      if (token) {
+        try {
+          api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+          const response = await api.get('/auth/profile/');
+          setUser(response.data);
+        } catch (error) {
+          console.error("Token inválido, deslogando.", error);
+          signOut();
+        }
+      }
+      setLoading(false);
     }
-    setLoading(false);
+    loadUserFromStorage();
   }, []);
 
+
   const signIn = async (email: string, password: string) => {
-  // 1. Defina aqui as credenciais corretas
-  const correctEmail = "test@test.com";
-  const correctPassword = "123456";
+    try {
+      const response = await api.post('/auth/login/', 
+        { email, password },
+        { 
+          headers: {
+            'Accept': 'application/json;version=v1_web',
+            'Content-Type': 'application/json'
+          }
+        }
+      );
 
-  // Simula um pequeno atraso, como se fosse uma chamada de API real
-  await new Promise(resolve => setTimeout(resolve, 500));
+      const { user, tokens } = response.data;
 
-  // 2. Verifica se o e-mail e a senha correspondem
-  if (email === correctEmail && password === correctPassword) {
-    // 3. Se estiverem corretos, cria o usuário e faz o login
-    const fakeUser = {
-      name: "Jamykson Freitas",
-      email: correctEmail,
-      avatar: "https://avatars.githubusercontent.com/u/105256874?v=4",
-    };
+      
+      if (tokens && tokens.access) {
+        const accessToken = tokens.access;
+        
+        localStorage.setItem("@b2bit_token", accessToken);        
+        
+        api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
 
-    setUser(fakeUser);
-    localStorage.setItem("user", JSON.stringify(fakeUser));
-  } else {
-    // 4. Se estiverem errados, lança um erro com uma mensagem
-    throw new Error("E-mail ou senha inválidos.");
-  }
-};
+        setUser(user);
+      } else {
+        
+        throw new Error("Token de acesso não encontrado na resposta da API.");
+      }
+    } catch (error: any) {
+      if (error.response && error.response.data) {
+        const detailError = error.response.data.detail || "E-mail ou senha inválidos.";
+        throw new Error(detailError);
+      }
+      console.error("Erro de rede. Verifique a conexão e o proxy.", error);
+      throw new Error("Não foi possível conectar ao servidor.");
+    }
+  };
 
   const signOut = () => {
-    localStorage.removeItem("user");
+    localStorage.removeItem("@b2bit_token");
     setUser(null);
-    // A linha de window.location.replace foi removida daqui
+    delete api.defaults.headers.common['Authorization'];
   };
 
   return (
